@@ -6,7 +6,7 @@ from utils import ReplayBuffer
 
 def train():
     ######### Hyperparameters #########
-    env_name = "BipedalWalker-v2"
+    env_name = "LunarLanderContinuous-v2"
     log_interval = 10           # print avg reward after interval
     random_seed = 0
     gamma = 0.99                # discount for future rewards
@@ -19,7 +19,7 @@ def train():
     policy_delay = 2            # delayed policy updates parameter
     max_episodes = 1000         # max num of episodes
     max_timesteps = 2000        # max timesteps in one episode
-    directory = "./preTrained/{}".format(env_name) # save trained models
+    directory = "./preTrained2/{}".format(env_name) # save trained models
     filename = "TD3_{}_{}".format(env_name, random_seed)
     ###################################
     
@@ -40,13 +40,14 @@ def train():
     # logging variables:
     avg_reward = 0
     ep_reward = 0
-    log_f = open("log.txt","w+")
+    log_f = open(f"log_{env_name}.txt","w+")
+    log_avg_f = open(f"log_avg_{env_name}.txt","w+")
     
     # training procedure:
     for episode in range(1, max_episodes+1):
         state = env.reset()
         for t in range(max_timesteps):
-            # select action and add exploration noise:
+            # select action and add exploration noise and clip:
             action = policy.select_action(state)
             action = action + np.random.normal(0, exploration_noise, size=env.action_space.shape[0])
             action = action.clip(env.action_space.low, env.action_space.high)
@@ -84,8 +85,11 @@ def train():
         if episode % log_interval == 0:
             avg_reward = int(avg_reward / log_interval)
             print("Episode: {}\tAverage Reward: {}".format(episode, avg_reward))
+            log_avg_f.write('{},{}\n'.format(episode, avg_reward))
+            log_avg_f.flush()
             avg_reward = 0
 
+    log_avg_f.close()
 if __name__ == '__main__':
     train()
     

@@ -1,15 +1,15 @@
-import roboschool, gym
+import gym
 from TD3 import TD3
 from PIL import Image
 
 def test():
-    env_name = "RoboschoolWalker2d-v1"
+    env_name = "LunarLanderContinuous-v2"
     random_seed = 0
     n_episodes = 3
-    lr = 0.002
+    lr = 0.001
     max_timesteps = 2000
     render = True
-    save_gif = False
+    save_gif = True
     
     filename = "TD3_{}_{}".format(env_name, random_seed)
     filename += '_solved'
